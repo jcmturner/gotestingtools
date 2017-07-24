@@ -51,3 +51,12 @@ func GenerateSelfSignedTLSKeyPairData(t *testing.T) ([]byte, *rsa.PrivateKey) {
 	}
 	return derBytes, priv
 }
+
+func WriteCertPoolToFile(t *testing.T, cp x509.CertPool) (*os.File) {
+	certOut, _ := ioutil.TempFile(os.TempDir(), "testCert")
+	for _, c := range cp.Subjects() {
+		pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: c})
+	}
+	certOut.Close()
+	return certOut
+}

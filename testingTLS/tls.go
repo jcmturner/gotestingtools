@@ -52,11 +52,19 @@ func GenerateSelfSignedTLSKeyPairData(t *testing.T) ([]byte, *rsa.PrivateKey) {
 	return derBytes, priv
 }
 
-func WriteCertPoolToFile(t *testing.T, cp x509.CertPool) (*os.File) {
+// Cannot write a cert pool to a file as the certificates are not exported from the struct in any way
+//func WriteCertPoolToFile(t *testing.T, cp x509.CertPool) (*os.File) {
+//	certOut, _ := ioutil.TempFile(os.TempDir(), "testCert")
+//	for _, c := range cp.Subjects() {
+//		pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: c})
+//	}
+//	certOut.Close()
+//	return certOut
+//}
+
+func WriteCertToFile(t *testing.T, c *x509.Certificate) *os.File {
 	certOut, _ := ioutil.TempFile(os.TempDir(), "testCert")
-	for _, c := range cp.Subjects() {
-		pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: c})
-	}
+	pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: c.Raw})
 	certOut.Close()
 	return certOut
 }
